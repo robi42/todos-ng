@@ -1,9 +1,9 @@
 # Todos NG App
 
 This is a minimal [RingoJS]/[Scala] hybrid app targeting deployment to [Heroku]. <br>
-Its web layer is based on [Stick] and its persistence layer on [Rogue].
-The client-side UI layer is based on [Backbone].
-Basically, this is its [Todos] example app ported.
+Its web layer is based on [Stick] and its persistence layer on [Rogue]. <br>
+The client-side UI layer is based on [Backbone]. <br>
+Basically, this is its [Todos] example app ported. <br>
 FYI: the app's [template]'s on GitHub as well.
 
 ## Dev

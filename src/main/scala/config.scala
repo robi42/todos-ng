@@ -11,7 +11,7 @@ object MongoConfig {
        Props.get("mongo.host", "127.0.0.1"),
        Props.getInt("mongo.port", 27017)
     )
-    val name = Props.get("mongo.db", "jvmng")
+    val name = Props.get("mongo.db", "todosng")
 
     Props.mode match {
       case Props.RunModes.Production => {
