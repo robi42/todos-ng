@@ -164,16 +164,13 @@ $(function(){
     },
 
     // At initialization we bind to the relevant events on the `Todos`
-    // collection, when items are added or changed. Kick things off by
-    // loading any preexisting todos that might be saved in *storage*.
+    // collection, when items are added or changed.
     initialize: function() {
       this.input    = this.$("#new-todo");
 
       Todos.bind('add',   this.addOne, this);
       Todos.bind('reset', this.addAll, this);
       Todos.bind('all',   this.render, this);
-
-      Todos.fetch();
     },
 
     // Re-rendering the App just means refreshing the statistics -- the rest
