@@ -6,7 +6,7 @@ TODOS_URL = '/todos'
 TODO_URL  = "#{TODOS_URL}/:id"
 
 # Request/response handling.
-app.get '/', (req) ->
+app.get '/', ->
   app.render 'index.html', title: 'Backbone Demo: Todos'
 
 app.get TODOS_URL, ->
