@@ -42,8 +42,8 @@ To make an assembly of all `sbt` project lib dependencies:
     $ heroku addons:add mongolab
     $ heroku config
 
-Now, adjust `src/main/resources/props/production.default.props` accordingly. <br>
-Plus, rebuild `scala-app.jar` (via `> package`) to include this config update.
+Now, adjust `src/main/resources/props/production.default.props` according to `MONGOLAB_URI`. <br>
+Plus, rebuild `application.jar` (via `> package`) to include this config update.
 
     $ heroku config:add LIFT_PROD=-Drun.mode=production
     $ heroku config:add RINGO_PROD=--production
