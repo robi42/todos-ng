@@ -1,34 +1,34 @@
-{respondWith}        = require './response'
-{MongoConfig, Todos} = com.robert42.todosng
-app = exports.app    = require('./config').app
-log = require('ringo/logging').getLogger(module.id)
+{Application} = require 'stick'
+fs            = require 'fs'
+{MongoConfig} = com.robert42.todosng
 
-TODOS_URL = '/todos'
-TODO_URL  = "#{TODOS_URL}/:id"
+log        = require('ringo/logging').getLogger(module.id)
+publicPath = module.resolve(fs.join('..', 'public'))
 
-# Request/response handling.
-app.get '/', ->
-  app.render 'index.html',
-    title: 'Backbone Demo: Todos', all: Todos.all()
+# Set up application.
+app = exports.app = Application()
+app.configure 'notfound', 'mount'
 
-app.get TODOS_URL, ->
-  respondWith.json Todos.all()
+# Configure dev env.
+dev = app.env('dev')
+dev.configure 'static', 'requestlog', 'error'
+dev.requestlog.append = true
+dev.static publicPath
 
-app.post TODOS_URL, (req) ->
-  json = JSON.stringify(req.postParams)
-  respondWith.json Todos.create(json)
+# Configure profiling env.
+prof = app.env('profiler')
+prof.configure 'static', 'requestlog', 'profiler', 'error'
+prof.requestlog.append = true
+prof.static publicPath
 
-app.get TODO_URL, (req, id) ->
-  respondWith.json Todos.get(id)
+# Configure production env.
+prod = app.env('production')
+prod.configure 'gzip', 'etag', 'static', 'error'
+prod.error.location = false
+prod.static publicPath
 
-app.put TODO_URL, (req, id) ->
-  req.postParams._id = id
-  json = JSON.stringify(req.postParams)
-  respondWith.json Todos.update(json)
-
-app.del TODO_URL, (req, id) ->
-  Todos.remove id
-  respondWith.json ''
+# Mount actions of app.
+app.mount '/', require('./actions')
 
 
 # Script to run app from command line.
