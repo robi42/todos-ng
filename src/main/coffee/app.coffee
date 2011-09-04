@@ -13,12 +13,14 @@ app.configure 'notfound', 'mount'
 dev = app.env('dev')
 dev.configure 'static', 'requestlog', 'error'
 dev.requestlog.append = true
+dev.error.javaStack   = true
 dev.static publicPath
 
 # Configure profiling env.
 prof = app.env('profiler')
 prof.configure 'static', 'requestlog', 'profiler', 'error'
 prof.requestlog.append = true
+prof.error.javaStack   = true
 prof.static publicPath
 
 # Configure production env.
