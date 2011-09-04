@@ -47,6 +47,7 @@ Plus, rebuild `application.jar` (via `> package`) to include this config update.
 
     $ heroku config:add LIFT_PROD=-Drun.mode=production
     $ heroku config:add RINGO_PROD=--production
+    $ heroku config:add RINGO_ENV=production
     $ git commit -am 'Make it ready for production.'
     $ git push heroku master
     $ heroku open
