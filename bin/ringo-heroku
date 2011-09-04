@@ -4,10 +4,14 @@
 # LIFT_PROD="-Drun.mode=production"
 # RINGO_PROD="--production"
 
+# For running in profiler env set:
+# RINGO_PROF="--optlevel -1"
+
 exec java $JAVA_OPTS -Xbootclasspath/p:jars/js.jar \
 -Dringo.classpath=jars/** \
 -Dlogback.configurationFile=config/logback.xml \
 $LIFT_PROD \
 -jar run.jar \
 $RINGO_PROD \
+$RINGO_PROF \
 $1 -p $PORT

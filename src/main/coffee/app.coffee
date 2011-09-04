@@ -1,6 +1,7 @@
 {respondWith}        = require './response'
 {MongoConfig, Todos} = com.robert42.todosng
 app = exports.app    = require('./config').app
+log = require('ringo/logging').getLogger(module.id)
 
 TODOS_URL = '/todos'
 TODO_URL  = "#{TODOS_URL}/:id"

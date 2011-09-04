@@ -10,8 +10,15 @@ app.configure 'notfound', 'params', 'route', 'render'
 
 # Configure dev env.
 dev = app.env('dev')
-dev.configure 'static', 'error'
+dev.configure 'static', 'requestlog', 'error'
+dev.requestlog.append = true
 dev.static publicPath
+
+# Configure profiling env.
+prof = app.env('profiler')
+prof.configure 'static', 'requestlog', 'profiler', 'error'
+prof.requestlog.append = true
+prof.static publicPath
 
 # Configure production env.
 prod = app.env('production')
