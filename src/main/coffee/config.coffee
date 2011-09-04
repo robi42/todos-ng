@@ -6,14 +6,19 @@ templatesPath = module.resolve(fs.join('..', 'templates'))
 
 # Set up application.
 app = exports.app = Application()
-app.configure 'notfound', 'error', 'static',
-  'params', 'route', 'render'
-app.static publicPath
-app.render.base   = templatesPath
-app.render.master = 'page.html'
+app.configure 'notfound', 'params', 'route', 'render'
+
+# Configure dev env.
+dev = app.env('dev')
+dev.configure 'static', 'error'
+dev.static publicPath
 
 # Configure production env.
 prod = app.env('production')
-prod.configure 'notfound', 'error', 'gzip', 'etag',
-  'static', 'params', 'route', 'render'
+prod.configure 'gzip', 'etag', 'static', 'error'
 prod.error.location = false
+prod.static publicPath
+
+# Configure templating.
+app.render.base   = templatesPath
+app.render.master = 'page.html'

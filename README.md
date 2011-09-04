@@ -16,6 +16,7 @@ To run the app locally launch `ringo` <br>
 with the main script via `foreman`:
 
     $ gem install foreman
+    $ export RINGO_ENV=dev
     $ foreman start
 
 Then point your browser to this URL:
