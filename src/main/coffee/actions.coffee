@@ -6,7 +6,7 @@ fs            = require 'fs'
 log = require('ringo/logging').getLogger(module.id)
 
 app = exports.app = Application()
-app.configure 'params', 'route', 'render'
+app.configure 'body', 'route', 'render'
 
 # Configure templating.
 app.render.base   = module.resolve(fs.join('..', 'templates'))
@@ -24,16 +24,13 @@ app.get TODOS_URL, ->
   respondWith.json Todos.all()
 
 app.post TODOS_URL, (req) ->
-  json = JSON.stringify(req.postParams)
-  respondWith.json Todos.create(json)
+  respondWith.json Todos.create(req.body)
 
 app.get TODO_URL, (req, id) ->
   respondWith.json Todos.get(id)
 
 app.put TODO_URL, (req, id) ->
-  req.postParams._id = id
-  json = JSON.stringify(req.postParams)
-  respondWith.json Todos.update(json)
+  respondWith.json Todos.update(req.body)
 
 app.del TODO_URL, (req, id) ->
   Todos.remove id
