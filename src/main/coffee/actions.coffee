@@ -29,7 +29,7 @@ app.post TODOS_URL, (req) ->
 app.get TODO_URL, (req, id) ->
   respondWith.json Todos.get(id)
 
-app.put TODO_URL, (req, id) ->
+app.put TODO_URL, (req) ->
   respondWith.json Todos.update(req.body)
 
 app.del TODO_URL, (req, id) ->
