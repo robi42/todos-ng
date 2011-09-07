@@ -6,7 +6,7 @@ fs            = require 'fs'
 log = require('ringo/logging').getLogger(module.id)
 
 app = exports.app = Application()
-app.configure 'body', 'route', 'render'
+app.configure require('./body'), 'route', 'render'
 
 # Configure templating.
 app.render.base   = module.resolve(fs.join('..', 'templates'))
