@@ -15,9 +15,9 @@ class AppSpec extends Spec {
       // Querying.
       val query = Todo where (_.text eqs "Something.") get
       val todo  = query.get
-      todo.text.is  must equalTo("Something.")
-      todo.order.is must equalTo(1)
-      todo.done.is  must equalTo(false)
+      todo.text.value  must equalTo("Something.")
+      todo.order.value must equalTo(1)
+      todo.done.value  must equalTo(false)
 
       // Updating.
       val jsonForUpdate =
