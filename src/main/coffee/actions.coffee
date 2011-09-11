@@ -1,9 +1,9 @@
-{Application}            = require 'stick'
-fs                       = require 'fs'
-response                 = require 'ringo/jsgi/response'
-{respondWith, renderAs}  = require './response'
-{NoSuchElementException} = java.util
-{Todos}                  = com.robert42.todosng
+{Application}           = require 'stick'
+fs                      = require 'fs'
+response                = require 'ringo/jsgi/response'
+{respondWith, renderAs} = require './response'
+{Todos}                 = com.robert42.todosng
+{NoSuchElementException: NoSuchElement} = java.util
 
 log = require('ringo/logging').getLogger(module.id)
 
@@ -46,7 +46,7 @@ app.get TODO_URL, (req, id) ->
       renderAs.xml TODO_XML, data: JSON.parse(todo)
     else respondWith.json todo
   catch err
-    if err.javaException instanceof NoSuchElementException
+    if err.javaException instanceof NoSuchElement
       response.notFound "#{TODOS_URL}/#{id}"
     else throw err
 
@@ -64,6 +64,6 @@ app.del TODO_URL, (req, id) ->
       response.xml ''
     else respondWith.json ''
   catch err
-    if err.javaException instanceof NoSuchElementException
+    if err.javaException instanceof NoSuchElement
       response.notFound "#{TODOS_URL}/#{id}"
     else throw err

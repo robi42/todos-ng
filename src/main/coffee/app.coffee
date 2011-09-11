@@ -30,9 +30,10 @@ prod.configure 'gzip', 'etag', 'static', 'error'
 prod.error.location = false
 prod.static publicPath
 
-# Enables configuring auth.
-# app.basicauth '/', 'admin',
-#   Props.get('basicauth').openTheBox()
+# Configure auth.
+# app.basicauth '/',
+#   Props.get('basicauth.user').openTheBox(),
+#   Props.get('basicauth.sha1').openTheBox()
 
 # Mount actions of app.
 app.mount '/', require('./actions')
