@@ -1,0 +1,9 @@
+<todos>
+{{#all}}
+  <todo id="{{_id}}">
+    <text type="string">{{text}}</text>
+    <order type="int">{{order}}</order>
+    <done type="boolean">{{done}}</done>
+  </todo>
+{{/all}}
+</todos>

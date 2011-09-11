@@ -1,5 +1,6 @@
 {Application} = require 'stick'
 fs            = require 'fs'
+{Props}       = net.liftweb.util
 {MongoConfig} = com.robert42.todosng
 
 log        = require('ringo/logging').getLogger(module.id)
@@ -7,7 +8,7 @@ publicPath = module.resolve(fs.join('..', 'public'))
 
 # Set up application.
 app = exports.app = Application()
-app.configure 'notfound', 'mount'
+app.configure 'basicauth', 'notfound', 'mount'
 
 # Configure dev env.
 dev = app.env('dev')
@@ -28,6 +29,10 @@ prod = app.env('production')
 prod.configure 'gzip', 'etag', 'static', 'error'
 prod.error.location = false
 prod.static publicPath
+
+# Enables configuring auth.
+# app.basicauth '/', 'admin',
+#   Props.get('basicauth').openTheBox()
 
 # Mount actions of app.
 app.mount '/', require('./actions')
