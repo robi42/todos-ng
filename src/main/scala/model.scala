@@ -6,10 +6,12 @@ import net.liftweb.record.field._
 
 // Model definitions.
 trait Storable {
-  def create(json: String): String
+  def createFromJson(json: String): String
+  def createFromXml(xml: String): String
   def get(id: String): String
   def all: String
-  def update(json: String): String
+  def updateFromJson(json: String): String
+  def updateFromXml(xml: String): String
   def remove(id: String): Unit
 }
 

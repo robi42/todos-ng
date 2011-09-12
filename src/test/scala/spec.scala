@@ -10,7 +10,7 @@ class AppSpec extends Spec {
     @Test def `can be CRUDed.` = {
       // Creation.
       val json = """{"text": "Something.", "order": 1, "done": false}"""
-      Todos create json
+      Todos createFromJson json
 
       // Querying.
       val query = Todo where (_.text eqs "Something.") get
@@ -23,7 +23,7 @@ class AppSpec extends Spec {
       val jsonForUpdate =
         """{"order":2,"_id":"%s","text":"Something else.","done":true}"""
           .format(todo.id)
-      val updatedJson = Todos.update(jsonForUpdate)
+      val updatedJson = Todos.updateFromJson(jsonForUpdate)
       updatedJson must equalTo(jsonForUpdate)
 
       // Deletion.

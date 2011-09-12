@@ -9,7 +9,9 @@ log = require('ringo/logging').getLogger(module.id)
 
 app = exports.app = Application()
 app.configure require('./middleware/accepts'),
-  require('./middleware/body'), 'route', 'render'
+  require('./middleware/content-type'),
+  require('./middleware/body'),
+  'route', 'render'
 
 # Configure templating.
 app.render.base   = module.resolve(fs.join('..', 'templates'))
@@ -32,7 +34,11 @@ app.get TODOS_URL, (req) ->
   else respondWith.json all
 
 app.post TODOS_URL, (req) ->
-  todo = Todos.create(req.body)
+  todo =
+    if req.contentType.isJson
+      Todos.createFromJson req.body
+    else if req.contentType.isXml
+      Todos.createFromXml req.body
   log.debug 'Data:', todo
   if req.acceptsXml and not req.acceptsJson
     renderAs.xml TODO_XML, data: JSON.parse(todo)
@@ -51,7 +57,11 @@ app.get TODO_URL, (req, id) ->
     else throw err
 
 app.put TODO_URL, (req) ->
-  todo = Todos.update(req.body)
+  todo =
+    if req.contentType.isJson
+      Todos.updateFromJson req.body
+    else if req.contentType.isXml
+      Todos.updateFromXml req.body
   log.debug 'Data:', todo
   if req.acceptsXml and not req.acceptsJson
     renderAs.xml TODO_XML, data: JSON.parse(todo)
