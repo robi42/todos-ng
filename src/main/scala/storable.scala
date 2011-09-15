@@ -1,6 +1,6 @@
 package com.robert42.todosng
 
-import net.liftweb.json._
+import net.liftweb.json.{Serialization, NoTypeHints}
 import java.util.{Map => JdkMap}
 
 // API contract.
