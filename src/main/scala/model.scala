@@ -5,7 +5,6 @@ import net.liftweb.mongodb.record.field._
 import net.liftweb.record.field._
 import net.liftweb.json._
 
-
 // API contract.
 trait Storable {
   def createFromJson(json: String): String
