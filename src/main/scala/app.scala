@@ -9,7 +9,6 @@ import org.bson.types.ObjectId
 import scala.xml._
 import java.util.Calendar
 import java.util.{Map => JdkMap}
-import java.lang.IllegalArgumentException
 
 // Persistence layer interface.
 object Todos extends Storable {
@@ -20,7 +19,7 @@ object Todos extends Storable {
       createFromJson(read[TodoJsonData](json))
     else if (doUpdate)
       updateFromJson(read[TodoAllJsonData](json))
-    else throw new IllegalArgumentException(flagsErr)
+    else throw makeFlagsErr
   }
 
   private def createFromJson(data: TodoJsonData) = {
@@ -50,7 +49,7 @@ object Todos extends Storable {
     val data     = XML.loadString(xml)
     if (doCreate) createFromXml(data)
     else if (doUpdate) updateFromXml(data)
-    else throw new IllegalArgumentException(flagsErr)
+    else throw makeFlagsErr
   }
 
   private def createFromXml(data: NodeSeq) = {
