@@ -15,16 +15,14 @@ class AppSpec extends Spec {
       // Querying.
       val query = Todo where (_.text eqs "Something.") get
       val todo  = query.get
-      todo.text.value  must equalTo("Something.")
-      todo.order.value must equalTo(1)
-      todo.done.value  must equalTo(false)
+      assertTodo(todo)
 
       // Updating.
       val jsonForUpdate =
-        """{"order":2,"_id":"%s","text":"Something else.","done":true}"""
-          .format(todo.id)
+        """{"text":"Something else.","_id":"%s","order":2,"createdAt":%d,"done":true}"""
+          .format(todo.id, todo.createdAt.value.getTimeInMillis)
       val updatedJson = Todos.updateFromJson(jsonForUpdate)
-      updatedJson must equalTo(jsonForUpdate)
+      assertUpdatedJson(updatedJson, jsonForUpdate)
 
       // Deletion.
       Todos remove todo.id.toString
@@ -43,9 +41,7 @@ class AppSpec extends Spec {
       // Querying.
       val query = Todo where (_.text eqs "Something.") get
       val todo  = query.get
-      todo.text.value  must equalTo("Something.")
-      todo.order.value must equalTo(1)
-      todo.done.value  must equalTo(false)
+      assertTodo(todo)
 
       // Updating.
       def makeXmlForUpdate(id: String) =
@@ -55,15 +51,28 @@ class AppSpec extends Spec {
           <done type="boolean">true</done>
         </todo>
           .toString
+      val xmlForUpdate  = makeXmlForUpdate(todo.id.toString)
       val jsonForUpdate =
-        """{"order":2,"_id":"%s","text":"Something else.","done":true}"""
-          .format(todo.id)
-      val xmlForUpdate = makeXmlForUpdate(todo.id.toString)
+        """{"text":"Something else.","_id":"%s","order":2,"createdAt":%d,"done":true}"""
+          .format(todo.id, todo.createdAt.value.getTimeInMillis)
       val updatedJson = Todos.updateFromXml(xmlForUpdate)
-      updatedJson must equalTo(jsonForUpdate)
+      assertUpdatedJson(updatedJson, jsonForUpdate)
 
       // Deletion.
       Todos remove todo.id.toString
+    }
+
+    def assertTodo(todo: Todo) = {
+      todo.text.value  must equalTo("Something.")
+      todo.order.value must equalTo(1)
+      todo.done.value  must equalTo(false)
+    }
+
+    def assertUpdatedJson(updatedJson: String, jsonForUpdate: String) = {
+      updatedJson must contain("modifiedAt")
+      val jsonWithoutModifiedAt = updatedJson
+        .replaceFirst(""""modifiedAt":\d+,""", "")
+      jsonWithoutModifiedAt must equalTo(jsonForUpdate)
     }
   }
 }

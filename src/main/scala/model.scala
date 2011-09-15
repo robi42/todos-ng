@@ -3,8 +3,10 @@ package com.robert42.todosng
 import net.liftweb.mongodb.record._
 import net.liftweb.mongodb.record.field._
 import net.liftweb.record.field._
+import net.liftweb.json._
 
-// Model definitions.
+
+// API contract.
 trait Storable {
   def createFromJson(json: String): String
   def createFromXml(xml: String): String
@@ -15,15 +17,27 @@ trait Storable {
   def remove(id: String): Unit
 }
 
-case class TodoData(text: String, order: Int, done: Boolean)
-case class TodoAllData(_id: String, text: String, order: Int, done: Boolean)
+// For JSON serialization.
+sealed abstract class JsonData
+final case class TodoData(text: String, order: Int, done: Boolean)
+  extends JsonData
+final case class TodoAllData(_id: String, text: String, order: Int, done: Boolean)
+  extends JsonData
 
-class Todo private() extends MongoRecord[Todo] with ObjectIdPk[Todo] {
+// Model definitions.
+sealed class Todo private() extends MongoRecord[Todo] with ObjectIdPk[Todo] {
   def meta = Todo
 
-  object text  extends StringField(this, 12)
-  object order extends IntField(this)
-  object done  extends BooleanField(this)
+  object text       extends StringField(this, 12)
+  object order      extends IntField(this)
+  object done       extends BooleanField(this)
+  object createdAt  extends DateTimeField(this) {
+    override def asJValue = JInt(value.getTimeInMillis)
+  }
+  object modifiedAt extends DateTimeField(this) {
+    override def optional_? = true
+    override def asJValue   = JInt(value.getTimeInMillis)
+  }
 }
 
 object Todo extends Todo with MongoMetaRecord[Todo]

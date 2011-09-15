@@ -5,6 +5,7 @@ import net.liftweb.json.Serialization.read
 import com.foursquare.rogue.Rogue._
 import org.bson.types.ObjectId
 import scala.xml._
+import java.util.Calendar
 
 // Persistence layer interface.
 object Todos extends Storable {
@@ -51,7 +52,8 @@ object Todos extends Storable {
     val modification = query modify
       (_.text setTo data.text) and
       (_.order setTo data.order) and
-      (_.done setTo data.done)
+      (_.done setTo data.done) and
+      (_.modifiedAt setTo Calendar.getInstance)
     modification.updateOne
     val record = query.get.get
     compact(render(record.asJValue))
@@ -64,7 +66,8 @@ object Todos extends Storable {
     val modification = query modify
       (_.text setTo (data \ TEXT).text) and
       (_.order setTo (data \ ORDER).text.toInt) and
-      (_.done setTo (data \ DONE).text.toBoolean)
+      (_.done setTo (data \ DONE).text.toBoolean) and
+      (_.modifiedAt setTo Calendar.getInstance)
     modification.updateOne
     val record = query.get.get
     compact(render(record.asJValue))
