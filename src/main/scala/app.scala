@@ -11,13 +11,13 @@ import java.lang.IllegalArgumentException
 
 // Persistence layer interface.
 object Todos extends Storable {
-  implicit val formats = Serialization.formats(NoTypeHints)
+  private implicit val formats = Serialization.formats(NoTypeHints)
 
-  val FLAGS_ERROR = "Either `create` or `update` must be `true`."
+  private val FLAGS_ERROR = "Either `create` or `update` must be `true`."
 
-  val TEXT  = "text"
-  val ORDER = "order"
-  val DONE  = "done"
+  private val TEXT  = "text"
+  private val ORDER = "order"
+  private val DONE  = "done"
 
   def fromJson(json: String, flags: JdkMap[String, Boolean]) = {
     val doCreate = flags.get("create")

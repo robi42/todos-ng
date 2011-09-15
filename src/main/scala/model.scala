@@ -23,7 +23,7 @@ final case class TodoAllData(_id: String, text: String, order: Int, done: Boolea
   extends JsonData
 
 // Model definitions.
-sealed class Todo private() extends MongoRecord[Todo] with ObjectIdPk[Todo] {
+class Todo private() extends MongoRecord[Todo] with ObjectIdPk[Todo] {
   def meta = Todo
 
   object text       extends StringField(this, 12)
