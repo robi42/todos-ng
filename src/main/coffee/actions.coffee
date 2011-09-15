@@ -36,9 +36,9 @@ app.get TODOS_URL, (req) ->
 app.post TODOS_URL, (req) ->
   todo =
     if req.contentType.isJson
-      Todos.createFromJson req.body
+      Todos.fromJson req.body, create: true
     else if req.contentType.isXml
-      Todos.createFromXml req.body
+      Todos.fromXml req.body, create: true
   log.debug 'Data:', todo
   if req.acceptsXml and not req.acceptsJson
     renderAs.xml TODO_XML, data: JSON.parse(todo)
@@ -59,9 +59,9 @@ app.get TODO_URL, (req, id) ->
 app.put TODO_URL, (req) ->
   todo =
     if req.contentType.isJson
-      Todos.updateFromJson req.body
+      Todos.fromJson req.body, update: true
     else if req.contentType.isXml
-      Todos.updateFromXml req.body
+      Todos.fromXml req.body, update: true
   log.debug 'Data:', todo
   if req.acceptsXml and not req.acceptsJson
     renderAs.xml TODO_XML, data: JSON.parse(todo)
