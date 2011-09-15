@@ -4,6 +4,10 @@
     <text type="string">{{text}}</text>
     <order type="int">{{order}}</order>
     <done type="boolean">{{done}}</done>
+    <created-at type="datetime">{{createdAt}}</created-at>
+    {{#modifiedAt}}
+    <modified-at type="datetime">{{modifiedAt}}</modified-at>
+    {{/modifiedAt}}
   </todo>
 {{/all}}
 </todos>

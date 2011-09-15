@@ -34,9 +34,11 @@ sealed class Todo private() extends MongoRecord[Todo] with ObjectIdPk[Todo] {
   object createdAt  extends DateTimeField(this) {
     override def asJValue = JInt(value.getTimeInMillis)
   }
-  object modifiedAt extends DateTimeField(this) {
-    override def optional_? = true
-    override def asJValue   = JInt(value.getTimeInMillis)
+  object modifiedAt extends OptionalDateTimeField(this) {
+    override def asJValue = value match {
+      case Some(value) => JInt(value.getTimeInMillis)
+      case None        => JNull
+    }
   }
 }
 
