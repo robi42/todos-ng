@@ -15,12 +15,24 @@ trait Storable {
   def remove(id: String): Unit
 }
 
+// For `Storable#from[Json|Xml]` flags handling.
+object Flags extends Enumeration("create", "update") {
+  type Flags = Value
+  val  Create, Update = Value
+}
+
 // For JSON serialization.
 sealed abstract class JsonData
-final case class TodoData(text: String, order: Int, done: Boolean)
+final case class TodoJsonData(text: String, order: Int, done: Boolean)
   extends JsonData
-final case class TodoAllData(_id: String, text: String, order: Int, done: Boolean)
+final case class TodoAllJsonData(_id: String, text: String, order: Int, done: Boolean)
   extends JsonData
+
+// For XML serialization.
+object TodoXmlData extends Enumeration("text", "order", "done") {
+  type TodoXmlData = Value
+  val  TextElem, OrderElem, DoneElem = Value
+}
 
 // Model definitions.
 class Todo private() extends MongoRecord[Todo] with ObjectIdPk[Todo] {

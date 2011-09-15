@@ -1,5 +1,7 @@
 package com.robert42.todosng
 
+import Flags._
+import TodoXmlData._
 import net.liftweb.json._
 import net.liftweb.json.Serialization.read
 import com.foursquare.rogue.Rogue._
@@ -13,23 +15,19 @@ import java.lang.IllegalArgumentException
 object Todos extends Storable {
   private implicit val formats = Serialization.formats(NoTypeHints)
 
-  private val FLAGS_ERROR = "Either `create` or `update` must be `true`."
-
-  private val TEXT  = "text"
-  private val ORDER = "order"
-  private val DONE  = "done"
+  private val flagsErr = "Either `create` or `update` must be `true`."
 
   def fromJson(json: String, flags: JdkMap[String, Boolean]) = {
-    val doCreate = flags.get("create")
-    val doUpdate = flags.get("update")
+    val doCreate = flags.get(Create.toString)
+    val doUpdate = flags.get(Update.toString)
     if (doCreate)
-      createFromJson(read[TodoData](json))
+      createFromJson(read[TodoJsonData](json))
     else if (doUpdate)
-      updateFromJson(read[TodoAllData](json))
-    else throw new IllegalArgumentException(FLAGS_ERROR)
+      updateFromJson(read[TodoAllJsonData](json))
+    else throw new IllegalArgumentException(flagsErr)
   }
 
-  private def createFromJson(data: TodoData) = {
+  private def createFromJson(data: TodoJsonData) = {
     val record = Todo.createRecord
       .text(data.text)
       .order(data.order)
@@ -38,7 +36,7 @@ object Todos extends Storable {
     compact(render(record.asJValue))
   }
 
-  private def updateFromJson(data: TodoAllData) = {
+  private def updateFromJson(data: TodoAllJsonData) = {
     val query = Todo where (_.id eqs new ObjectId(data._id))
     val modification = query modify
       (_.text setTo data.text) and
@@ -51,19 +49,19 @@ object Todos extends Storable {
   }
 
   def fromXml(xml: String, flags: JdkMap[String, Boolean]) = {
-    val doCreate = flags.get("create")
-    val doUpdate = flags.get("update")
+    val doCreate = flags.get(Create.toString)
+    val doUpdate = flags.get(Update.toString)
     val data     = XML.loadString(xml)
     if (doCreate) createFromXml(data)
     else if (doUpdate) updateFromXml(data)
-    else throw new IllegalArgumentException(FLAGS_ERROR)
+    else throw new IllegalArgumentException(flagsErr)
   }
 
   private def createFromXml(data: NodeSeq) = {
     val record = Todo.createRecord
-      .text((data \ TEXT).text)
-      .order((data \ ORDER).text.toInt)
-      .done((data \ DONE).text.toBoolean)
+      .text((data \ TextElem.toString).text)
+      .order((data \ OrderElem.toString).text.toInt)
+      .done((data \ DoneElem.toString).text.toBoolean)
       .save
     compact(render(record.asJValue))
   }
@@ -72,9 +70,9 @@ object Todos extends Storable {
     val id    = (data \ "@id").text
     val query = Todo where (_.id eqs new ObjectId(id))
     val modification = query modify
-      (_.text setTo (data \ TEXT).text) and
-      (_.order setTo (data \ ORDER).text.toInt) and
-      (_.done setTo (data \ DONE).text.toBoolean) and
+      (_.text setTo (data \ TextElem.toString).text) and
+      (_.order setTo (data \ OrderElem.toString).text.toInt) and
+      (_.done setTo (data \ DoneElem.toString).text.toBoolean) and
       (_.modifiedAt setTo Calendar.getInstance)
     modification.updateOne
     val record = query.get.get
