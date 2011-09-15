@@ -6,9 +6,8 @@ import net.liftweb.json._
 import net.liftweb.json.Serialization.read
 import com.foursquare.rogue.Rogue._
 import org.bson.types.ObjectId
-import scala.xml._
-import java.util.Calendar
-import java.util.{Map => JdkMap}
+import xml._
+import java.util.{Calendar, Map => JdkMap}
 
 // Persistence layer interface.
 object Todos extends Storable {
