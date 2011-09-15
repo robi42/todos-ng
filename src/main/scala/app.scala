@@ -13,10 +13,6 @@ import java.lang.IllegalArgumentException
 
 // Persistence layer interface.
 object Todos extends Storable {
-  private implicit val formats = Serialization.formats(NoTypeHints)
-
-  private val flagsErr = "Either `create` or `update` must be `true`."
-
   def fromJson(json: String, flags: JdkMap[String, Boolean]) = {
     val doCreate = flags.get(Create.toString)
     val doUpdate = flags.get(Update.toString)
@@ -67,7 +63,7 @@ object Todos extends Storable {
   }
 
   private def updateFromXml(data: NodeSeq) = {
-    val id    = (data \ "@id").text
+    val id    = (data \ IdAttr.toString).text
     val query = Todo where (_.id eqs new ObjectId(id))
     val modification = query modify
       (_.text setTo (data \ TextElem.toString).text) and
