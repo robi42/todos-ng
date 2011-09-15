@@ -12,8 +12,8 @@ import java.util.{Calendar, Map => JdkMap}
 // Persistence layer interface.
 object Todos extends Storable {
   def fromJson(json: String, flags: JdkMap[String, Boolean]) = {
-    val doCreate = flags.get(Create.toString)
-    val doUpdate = flags.get(Update.toString)
+    val doCreate = flags get Create.toString
+    val doUpdate = flags get Update.toString
     if (doCreate)
       createFromJson(read[TodoJsonData](json))
     else if (doUpdate)
@@ -43,9 +43,9 @@ object Todos extends Storable {
   }
 
   def fromXml(xml: String, flags: JdkMap[String, Boolean]) = {
-    val doCreate = flags.get(Create.toString)
-    val doUpdate = flags.get(Update.toString)
-    val data     = XML.loadString(xml)
+    val doCreate = flags get Create.toString
+    val doUpdate = flags get Update.toString
+    val data     = XML loadString xml
     if (doCreate) createFromXml(data)
     else if (doUpdate) updateFromXml(data)
     else throw makeFlagsErr
