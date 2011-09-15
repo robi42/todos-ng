@@ -19,9 +19,9 @@ object Todos extends Storable {
   val ORDER = "order"
   val DONE  = "done"
 
-  def fromJson(json: String, options: JdkMap[String, AnyRef]) = {
-    val doCreate = options.get("create").asInstanceOf[Boolean]
-    val doUpdate = options.get("update").asInstanceOf[Boolean]
+  def fromJson(json: String, flags: JdkMap[String, Boolean]) = {
+    val doCreate = flags.get("create")
+    val doUpdate = flags.get("update")
     if (doCreate)
       createFromJson(read[TodoData](json))
     else if (doUpdate)
@@ -50,9 +50,9 @@ object Todos extends Storable {
     compact(render(record.asJValue))
   }
 
-  def fromXml(xml: String, options: JdkMap[String, AnyRef]) = {
-    val doCreate = options.get("create").asInstanceOf[Boolean]
-    val doUpdate = options.get("update").asInstanceOf[Boolean]
+  def fromXml(xml: String, flags: JdkMap[String, Boolean]) = {
+    val doCreate = flags.get("create")
+    val doUpdate = flags.get("update")
     val data     = XML.loadString(xml)
     if (doCreate) createFromXml(data)
     else if (doUpdate) updateFromXml(data)

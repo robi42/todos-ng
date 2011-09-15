@@ -8,8 +8,8 @@ import java.util.{Map => JdkMap}
 
 // API contract.
 trait Storable {
-  def fromJson(json: String, options: JdkMap[String, AnyRef]): String
-  def fromXml(xml: String, options: JdkMap[String, AnyRef]): String
+  def fromJson(json: String, flags: JdkMap[String, Boolean]): String
+  def fromXml(xml: String, flags: JdkMap[String, Boolean]): String
   def get(id: String): String
   def all: String
   def remove(id: String): Unit

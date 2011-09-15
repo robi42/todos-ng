@@ -2,6 +2,8 @@ import com.robert42.todosng.{MongoConfig, Todo, Todos}
 import org.junit.Test
 import com.codahale.simplespec.Spec
 import com.foursquare.rogue.Rogue._
+import collection.mutable.{Map => MMap}
+import collection.JavaConversions._
 
 class AppSpec extends Spec {
   MongoConfig.init
@@ -10,7 +12,7 @@ class AppSpec extends Spec {
     @Test def `can be CRUDed from JSON.` = {
       // Creation.
       val json = """{"text": "Something.", "order": 1, "done": false}"""
-      Todos createFromJson json
+      Todos.fromJson(json, MMap("create" -> true))
 
       // Querying.
       val query = Todo where (_.text eqs "Something.") get
@@ -21,7 +23,7 @@ class AppSpec extends Spec {
       val jsonForUpdate =
         """{"text":"Something else.","_id":"%s","order":2,"createdAt":%d,"done":true}"""
           .format(todo.id, todo.createdAt.value.getTimeInMillis)
-      val updatedJson = Todos.updateFromJson(jsonForUpdate)
+      val updatedJson = Todos.fromJson(jsonForUpdate, MMap("update" -> true))
       assertUpdatedJson(updatedJson, jsonForUpdate)
 
       // Deletion.
@@ -36,7 +38,7 @@ class AppSpec extends Spec {
                   <done type="boolean">false</done>
                 </todo>
                   .toString
-      Todos createFromXml xml
+      Todos.fromXml(xml, MMap("create" -> true))
 
       // Querying.
       val query = Todo where (_.text eqs "Something.") get
@@ -55,7 +57,7 @@ class AppSpec extends Spec {
       val jsonForUpdate =
         """{"text":"Something else.","_id":"%s","order":2,"createdAt":%d,"done":true}"""
           .format(todo.id, todo.createdAt.value.getTimeInMillis)
-      val updatedJson = Todos.updateFromXml(xmlForUpdate)
+      val updatedJson = Todos.fromXml(xmlForUpdate, MMap("update" -> true))
       assertUpdatedJson(updatedJson, jsonForUpdate)
 
       // Deletion.
