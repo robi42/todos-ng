@@ -1,11 +1,12 @@
 package com.robert42.todosng
 
+import net.liftweb.common.Logger
 import net.liftweb.json.{Serialization, NoTypeHints}
 import java.lang.IllegalArgumentException
 import java.util.{Map => JdkMap}
 
-// API contract.
-trait Storable {
+// API contract -- a.k.a. DAO.
+trait Storable extends Logger {
   protected[this] implicit val formats = Serialization.formats(NoTypeHints)
 
   protected[this] val flagsErrMsg = "Either `create` or `update` must be `true`."

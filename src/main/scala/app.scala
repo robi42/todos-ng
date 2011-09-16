@@ -25,6 +25,7 @@ object Todos extends Storable {
       .order(data.order)
       .done(data.done)
       .save
+    debug("Record: %s" format record)
     compact(render(record.asJValue))
   }
 
@@ -37,6 +38,7 @@ object Todos extends Storable {
       (_.modifiedAt setTo Calendar.getInstance)
     modification.updateOne
     val record = query.get.get
+    debug("Record: %s" format record)
     compact(render(record.asJValue))
   }
 
@@ -54,6 +56,7 @@ object Todos extends Storable {
       .order((data \ OrderElem.toString).text.toInt)
       .done((data \ DoneElem.toString).text.toBoolean)
       .save
+    debug("Record: %s" format record)
     compact(render(record.asJValue))
   }
 
@@ -67,16 +70,19 @@ object Todos extends Storable {
       (_.modifiedAt setTo Calendar.getInstance)
     modification.updateOne
     val record = query.get.get
+    debug("Record: %s" format record)
     compact(render(record.asJValue))
   }
 
   def get(id: String) = {
     val query  = Todo where (_.id eqs new ObjectId(id)) get
     val record = query.get
+    debug("Record: %s" format record)
     compact(render(record.asJValue))
   }
 
   def all = {
+    debug("Records: %s" format Todo.findAll)
     val all = Todo.findAll.map(_.asJValue)
     compact(render(JArray(all)))
   }
@@ -84,6 +90,7 @@ object Todos extends Storable {
   def remove(id: String) = {
     val query  = Todo where (_.id eqs new ObjectId(id)) get
     val record = query.get
+    debug("Record: %s" format record)
     record.delete_!
   }
 }
