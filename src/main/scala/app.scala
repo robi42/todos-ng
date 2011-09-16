@@ -1,6 +1,5 @@
 package com.robert42.todosng
 
-import Flags._
 import TodoXmlData._
 import net.liftweb.json._
 import net.liftweb.json.Serialization.read
@@ -12,8 +11,7 @@ import java.util.{Calendar, Map => JdkMap}
 // Persistence layer interface.
 object Todos extends Storable {
   def fromJson(json: String, flags: JdkMap[String, Boolean]) = {
-    val doCreate = flags get Create.toString
-    val doUpdate = flags get Update.toString
+    val (doCreate, doUpdate) = getFlags(flags)
     if (doCreate)
       createFromJson(read[TodoJsonData](json))
     else if (doUpdate)
@@ -43,9 +41,8 @@ object Todos extends Storable {
   }
 
   def fromXml(xml: String, flags: JdkMap[String, Boolean]) = {
-    val doCreate = flags get Create.toString
-    val doUpdate = flags get Update.toString
-    val data     = XML loadString xml
+    val (doCreate, doUpdate) = getFlags(flags)
+    val data = XML loadString xml
     if (doCreate) createFromXml(data)
     else if (doUpdate) updateFromXml(data)
     else throw makeFlagsErr
