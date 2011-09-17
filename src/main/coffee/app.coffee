@@ -39,7 +39,10 @@ prod.static publicPath
 app.mount '/', require('./actions')
 
 # Init MongoDB config on server init.
-exports.init = -> MongoConfig.init()
+exports.init = ->
+  log.info 'Init MongoDB config.'
+  MongoConfig.init()
+  return
 
 # Script to run app from command line.
 if require.main is module
