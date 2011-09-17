@@ -11,21 +11,24 @@ import java.util.Calendar
 class AppSpec extends Spec {
   MongoConfig.init
 
+  val TEXT        = "Something."
+  val UPDATE_TEXT = "Something else."
+
   class `A MongoDB document` {
     @Test def `can be CRUDed from JSON.` = {
       // Creation.
-      val json = ("text" -> "Something.") ~ ("order" -> 1) ~ ("done" -> false)
+      val json = ("text" -> TEXT) ~ ("order" -> 1) ~ ("done" -> false)
       Todos.fromJson(compact(render(json)), MMap("create" -> true))
 
       // Querying.
-      val query = Todo where (_.text eqs "Something.") get
+      val query = Todo where (_.text eqs TEXT) get
       val todo  = query.get
       assertTodo(todo)
 
       // Updating.
       val jsonForUpdate = ("_id" -> todo.id.toString) ~ ("done" -> true) ~
         ("createdAt" -> todo.createdAt.value.getTimeInMillis) ~
-        ("text" -> "Something else.")
+        ("text" -> UPDATE_TEXT)
       val updatedTodo = Todos.fromJson(
         compact(render(jsonForUpdate)), MMap("update" -> true)
       )
@@ -46,18 +49,18 @@ class AppSpec extends Spec {
       Todos.fromXml(xml, MMap("create" -> true))
 
       // Querying.
-      val query = Todo where (_.text eqs "Something.") get
+      val query = Todo where (_.text eqs TEXT) get
       val todo  = query.get
       assertTodo(todo)
 
       // Updating.
-      def makeXmlForUpdate(id: String) =
+      def makeXmlForUpdate(id: String, text: String) =
         <todo id={id}>
-          <text type="string">Something else.</text>
+          <text type="string">{text}</text>
           <done type="boolean">true</done>
         </todo>
           .toString
-      val xmlForUpdate = makeXmlForUpdate(todo.id.toString)
+      val xmlForUpdate = makeXmlForUpdate(todo.id.toString, UPDATE_TEXT)
       val updatedTodo  = Todos.fromXml(xmlForUpdate, MMap("update" -> true))
       assertTodo(updatedTodo, updated = true)
 
@@ -67,12 +70,12 @@ class AppSpec extends Spec {
 
     def assertTodo(todo: Todo, updated: Boolean = false) = {
       if (!updated) {
-        todo.text.value       must equalTo("Something.")
+        todo.text.value       must equalTo(TEXT)
         todo.order.value      must equalTo(1)
         todo.done.value       must equalTo(false)
         todo.modifiedAt.value must be(None)
       } else {
-        todo.text.value       must equalTo("Something else.")
+        todo.text.value       must equalTo(UPDATE_TEXT)
         todo.order.value      must equalTo(1)
         todo.done.value       must equalTo(true)
         todo.modifiedAt.value must not be(None)
