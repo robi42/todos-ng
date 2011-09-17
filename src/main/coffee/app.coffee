@@ -38,8 +38,9 @@ prod.static publicPath
 # Mount actions of app.
 app.mount '/', require('./actions')
 
+# Init MongoDB config on server init.
+exports.init = -> MongoConfig.init()
 
 # Script to run app from command line.
 if require.main is module
-  MongoConfig.init()
   require('ringo/httpserver').main module.id
