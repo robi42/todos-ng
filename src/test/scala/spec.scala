@@ -2,6 +2,8 @@ import com.robert42.todosng.{MongoConfig, Todo, Todos}
 import org.junit.Test
 import com.codahale.simplespec.Spec
 import com.foursquare.rogue.Rogue._
+import net.liftweb.json._
+import net.liftweb.json.JsonDSL._
 import collection.mutable.{Map => MMap}
 import collection.JavaConversions._
 import java.util.Calendar
@@ -12,8 +14,8 @@ class AppSpec extends Spec {
   class `A MongoDB document` {
     @Test def `can be CRUDed from JSON.` = {
       // Creation.
-      val json = """{"text": "Something.", "order": 1, "done": false}"""
-      Todos.fromJson(json, MMap("create" -> true))
+      val json = ("text" -> "Something.") ~ ("order" -> 1) ~ ("done" -> false)
+      Todos.fromJson(compact(render(json)), MMap("create" -> true))
 
       // Querying.
       val query = Todo where (_.text eqs "Something.") get
@@ -21,10 +23,12 @@ class AppSpec extends Spec {
       assertTodo(todo)
 
       // Updating.
-      val jsonForUpdate =
-        """{"text":"Something else.","_id":"%s","order":2,"createdAt":%d,"done":true}"""
-          .format(todo.id, todo.createdAt.value.getTimeInMillis)
-      val updatedTodo = Todos.fromJson(jsonForUpdate, MMap("update" -> true))
+      val jsonForUpdate = ("_id" -> todo.id.toString) ~ ("done" -> true) ~
+        ("createdAt" -> todo.createdAt.value.getTimeInMillis) ~
+        ("text" -> "Something else.")
+      val updatedTodo = Todos.fromJson(
+        compact(render(jsonForUpdate)), MMap("update" -> true)
+      )
       assertTodo(updatedTodo, updated = true)
 
       // Deletion.
@@ -50,15 +54,11 @@ class AppSpec extends Spec {
       def makeXmlForUpdate(id: String) =
         <todo id={id}>
           <text type="string">Something else.</text>
-          <order type="int">2</order>
           <done type="boolean">true</done>
         </todo>
           .toString
-      val xmlForUpdate  = makeXmlForUpdate(todo.id.toString)
-      val jsonForUpdate =
-        """{"text":"Something else.","_id":"%s","order":2,"createdAt":%d,"done":true}"""
-          .format(todo.id, todo.createdAt.value.getTimeInMillis)
-      val updatedTodo = Todos.fromXml(xmlForUpdate, MMap("update" -> true))
+      val xmlForUpdate = makeXmlForUpdate(todo.id.toString)
+      val updatedTodo  = Todos.fromXml(xmlForUpdate, MMap("update" -> true))
       assertTodo(updatedTodo, updated = true)
 
       // Deletion.
@@ -73,7 +73,7 @@ class AppSpec extends Spec {
         todo.modifiedAt.value must be(None)
       } else {
         todo.text.value       must equalTo("Something else.")
-        todo.order.value      must equalTo(2)
+        todo.order.value      must equalTo(1)
         todo.done.value       must equalTo(true)
         todo.modifiedAt.value must not be(None)
       }
