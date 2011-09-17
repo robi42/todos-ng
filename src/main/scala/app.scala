@@ -1,11 +1,12 @@
 package com.robert42.todosng
 
 import TodoXmlData._
-import net.liftweb.json._
+import net.liftweb.record.Record
 import net.liftweb.json.Serialization.read
 import com.foursquare.rogue.Rogue._
 import org.bson.types.ObjectId
 import xml._
+import collection.JavaConversions.asJavaList
 import java.util.{Calendar, Map => JdkMap}
 
 // Persistence layer interface.
@@ -26,7 +27,7 @@ object Todos extends Storable {
       .done(data.done)
       .save
     debug("Record: %s" format record)
-    compact(render(record.asJValue))
+    record
   }
 
   private def updateFromJson(data: TodoAllJsonData) = {
@@ -39,7 +40,7 @@ object Todos extends Storable {
     modification.updateOne
     val record = query.get.get
     debug("Record: %s" format record)
-    compact(render(record.asJValue))
+    record
   }
 
   def fromXml(xml: String, flags: JdkMap[String, Boolean]) = {
@@ -57,7 +58,7 @@ object Todos extends Storable {
       .done((data \ DoneElem.toString).text.toBoolean)
       .save
     debug("Record: %s" format record)
-    compact(render(record.asJValue))
+    record
   }
 
   private def updateFromXml(data: NodeSeq) = {
@@ -71,20 +72,20 @@ object Todos extends Storable {
     modification.updateOne
     val record = query.get.get
     debug("Record: %s" format record)
-    compact(render(record.asJValue))
+    record
   }
 
   def get(id: String) = {
     val query  = Todo where (_.id eqs new ObjectId(id)) get
     val record = query.get
     debug("Record: %s" format record)
-    compact(render(record.asJValue))
+    record
   }
 
   def all = {
-    debug("Records: %s" format Todo.findAll)
-    val all = Todo.findAll.map(_.asJValue)
-    compact(render(JArray(all)))
+    val all: java.util.List[Record[_]] = Todo.findAll
+    debug("Records: %s" format all)
+    all
   }
 
   def remove(id: String) = {

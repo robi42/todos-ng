@@ -3,8 +3,8 @@ fs            = require 'fs'
 {Props}       = net.liftweb.util
 {MongoConfig} = com.robert42.todosng
 
-log        = require('ringo/logging').getLogger(module.id)
-publicPath = module.resolve(fs.join('..', 'public'))
+log        = require('ringo/logging').getLogger module.id
+publicPath = module.resolve fs.join('..', 'public')
 
 # Set up application.
 app = exports.app = Application()

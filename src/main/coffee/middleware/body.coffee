@@ -3,6 +3,6 @@ exports.middleware = (next, app) ->
   (req) ->
     Object.defineProperty req, 'body',
       get: ->
-        body ? @input.read().decodeToString('utf8')
+        body ? @input.read().decodeToString 'utf8'
       configurable: true
     next req

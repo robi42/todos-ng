@@ -21,6 +21,8 @@ class Todo private() extends MongoRecord[Todo] with ObjectIdPk[Todo] {
       case None        => JNull
     }
   }
+
+  def toJson = compact(render(this.asJValue))
 }
 
 object Todo extends Todo with MongoMetaRecord[Todo]

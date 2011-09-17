@@ -4,7 +4,7 @@ fs            = require 'fs'
 app = exports.app = Application()
 app.configure 'render'
 
-renderBase = getRepository(module.resolve(
+renderApiBase = getRepository(module.resolve(
   fs.join '..', 'templates', 'api'
 ))
 
@@ -21,6 +21,6 @@ module.exports =
   renderAs:
     xml: (template, data) ->
       app.render template, data,
-        base:        renderBase
+        base:        renderApiBase
         master:      'master.xml'
         contentType: 'application/xml'

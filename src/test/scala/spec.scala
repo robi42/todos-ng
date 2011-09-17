@@ -4,6 +4,7 @@ import com.codahale.simplespec.Spec
 import com.foursquare.rogue.Rogue._
 import collection.mutable.{Map => MMap}
 import collection.JavaConversions._
+import java.util.Calendar
 
 class AppSpec extends Spec {
   MongoConfig.init
@@ -23,8 +24,8 @@ class AppSpec extends Spec {
       val jsonForUpdate =
         """{"text":"Something else.","_id":"%s","order":2,"createdAt":%d,"done":true}"""
           .format(todo.id, todo.createdAt.value.getTimeInMillis)
-      val updatedJson = Todos.fromJson(jsonForUpdate, MMap("update" -> true))
-      assertUpdatedJson(updatedJson, jsonForUpdate)
+      val updatedTodo = Todos.fromJson(jsonForUpdate, MMap("update" -> true))
+      assertTodo(updatedTodo, updated = true)
 
       // Deletion.
       Todos remove todo.id.toString
@@ -57,24 +58,26 @@ class AppSpec extends Spec {
       val jsonForUpdate =
         """{"text":"Something else.","_id":"%s","order":2,"createdAt":%d,"done":true}"""
           .format(todo.id, todo.createdAt.value.getTimeInMillis)
-      val updatedJson = Todos.fromXml(xmlForUpdate, MMap("update" -> true))
-      assertUpdatedJson(updatedJson, jsonForUpdate)
+      val updatedTodo = Todos.fromXml(xmlForUpdate, MMap("update" -> true))
+      assertTodo(updatedTodo, updated = true)
 
       // Deletion.
       Todos remove todo.id.toString
     }
 
-    def assertTodo(todo: Todo) = {
-      todo.text.value  must equalTo("Something.")
-      todo.order.value must equalTo(1)
-      todo.done.value  must equalTo(false)
-    }
-
-    def assertUpdatedJson(updatedJson: String, jsonForUpdate: String) = {
-      updatedJson must contain("modifiedAt")
-      val jsonWithoutModifiedAt = updatedJson
-        .replaceFirst(""""modifiedAt":\d+,""", "")
-      jsonWithoutModifiedAt must equalTo(jsonForUpdate)
+    def assertTodo(todo: Todo, updated: Boolean = false) = {
+      if (!updated) {
+        todo.text.value       must equalTo("Something.")
+        todo.order.value      must equalTo(1)
+        todo.done.value       must equalTo(false)
+        todo.modifiedAt.value must be(None)
+      } else {
+        todo.text.value       must equalTo("Something else.")
+        todo.order.value      must equalTo(2)
+        todo.done.value       must equalTo(true)
+        todo.modifiedAt.value must not be(None)
+      }
+      todo.createdAt.value    must not equalTo(null)
     }
   }
 }
