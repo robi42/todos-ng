@@ -31,13 +31,11 @@ object Todos extends Storable {
   }
 
   private def updateFromJson(data: TodoUpdateJson) = {
-    val query = Todo where (_.id eqs new ObjectId(data._id))
-    val modification = query modify
+    val modify = Todo where (_.id eqs new ObjectId(data._id)) findAndModify
       (_.text setTo data.text) and
       (_.done setTo data.done) and
       (_.modifiedAt setTo Calendar.getInstance)
-    modification.updateOne
-    val record = query.get.get
+    val record = modify.updateOne(returnNew = true).get
     debug("Record: %s" format record)
     record
   }
@@ -62,13 +60,11 @@ object Todos extends Storable {
 
   private def updateFromXml(data: NodeSeq) = {
     val id    = (data \ IdAttr.toString).text
-    val query = Todo where (_.id eqs new ObjectId(id))
-    val modification = query modify
+    val modify = Todo where (_.id eqs new ObjectId(id)) findAndModify
       (_.text setTo (data \ TextElem.toString).text) and
       (_.done setTo (data \ DoneElem.toString).text.toBoolean) and
       (_.modifiedAt setTo Calendar.getInstance)
-    modification.updateOne
-    val record = query.get.get
+    val record = modify.updateOne(returnNew = true).get
     debug("Record: %s" format record)
     record
   }

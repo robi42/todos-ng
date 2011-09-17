@@ -17,7 +17,7 @@ class AppSpec extends Spec {
   class `A MongoDB document` {
     @Test def `can be CRUDed from JSON.` = {
       // Creation.
-      val json = ("text" -> TEXT) ~ ("order" -> 1) ~ ("done" -> false)
+      val json = ("text" -> TEXT) ~ ("order" -> 1L) ~ ("done" -> false)
       Todos.fromJson(compact(render(json)), MMap("create" -> true))
 
       // Querying.
@@ -71,12 +71,12 @@ class AppSpec extends Spec {
     def assertTodo(todo: Todo, updated: Boolean = false) = {
       if (!updated) {
         todo.text.value       must equalTo(TEXT)
-        todo.order.value      must equalTo(1)
+        todo.order.value      must equalTo(1L)
         todo.done.value       must equalTo(false)
         todo.modifiedAt.value must be(None)
       } else {
         todo.text.value       must equalTo(UPDATE_TEXT)
-        todo.order.value      must equalTo(1)
+        todo.order.value      must equalTo(1L)
         todo.done.value       must equalTo(true)
         todo.modifiedAt.value must not be(None)
       }
