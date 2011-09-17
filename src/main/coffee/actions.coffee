@@ -28,8 +28,7 @@ app.get '/', ->
   json = JSON.stringify data
   log.debug 'Data:', json
   app.render 'index.html',
-    title: 'Backbone Demo: Todos'
-    all:   json
+    title: 'Backbone Demo: Todos', all: json
 
 app.get TODOS_URL, (req) ->
   all  = new ScriptableList Todos.all()
