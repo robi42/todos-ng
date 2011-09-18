@@ -3,7 +3,6 @@ package com.robert42.todosng
 import net.liftweb.mongodb.record._
 import net.liftweb.mongodb.record.field._
 import net.liftweb.record.field._
-import net.liftweb.json._
 import net.liftweb.json.JsonDSL._
 
 // Model definitions.

@@ -4,7 +4,6 @@ import net.liftweb.common.Logger
 import net.liftweb.record.Record
 import net.liftweb.record.field._
 import net.liftweb.json._
-import net.liftweb.json.{Serialization, NoTypeHints}
 import java.lang.IllegalArgumentException
 import java.util.{Map => JdkMap, List => JdkList}
 
