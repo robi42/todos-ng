@@ -2,6 +2,7 @@ package com.robert42.todosng
 
 import TodoXmlData._
 import net.liftweb.record.Record
+import net.liftweb.json._
 import net.liftweb.json.Serialization.read
 import com.foursquare.rogue.Rogue._
 import org.bson.types.ObjectId
@@ -80,6 +81,12 @@ object Todos extends Storable {
     val all: JdkList[Record[_]] = Todo.findAll
     debug("Records: %s" format all)
     all
+  }
+
+  def allAsJson = {
+    val all = Todo.findAll.map(_.asJValue)
+    debug("Records: %s" format all)
+    compact(render(JArray(all)))
   }
 
   def remove(id: String) = {

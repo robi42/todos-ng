@@ -21,5 +21,6 @@ trait Storable extends Logger {
   def fromXml(xml: String, flags: JdkMap[String, Boolean]): Record[_]
   def get(id: String): Record[_]
   def all: JdkList[Record[_]]
+  def allAsJson: String
   def remove(id: String): Unit
 }

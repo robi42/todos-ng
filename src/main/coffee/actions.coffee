@@ -1,8 +1,8 @@
-{Application}           = require 'stick'
-fs                      = require 'fs'
-response                = require 'ringo/jsgi/response'
-{respondWith, renderAs} = require './response'
-{Todos}                 = com.robert42.todosng
+{Application}                  = require 'stick'
+fs                             = require 'fs'
+response                       = require 'ringo/jsgi/response'
+{respondWithJson, renderAsXml} = require './response'
+{Todos}                        = com.robert42.todosng
 {NoSuchElementException: NoSuchElement} = java.util
 
 log = require('ringo/logging').getLogger module.id
@@ -23,22 +23,19 @@ TODO_XML  = 'todo.xml'
 
 # Request/response handling.
 app.get '/', ->
-  all  = new ScriptableList Todos.all()
-  data = (JSON.parse x.toJson() for x in all)
-  json = JSON.stringify data
+  json = Todos.allAsJson()
   log.debug 'Data:', json
   app.render 'index.html',
     title: 'Backbone Demo: Todos', all: json
 
 app.get TODOS_URL, (req) ->
-  all  = new ScriptableList Todos.all()
-  data = (JSON.parse x.toJson() for x in all)
+  json = Todos.allAsJson()
+  log.debug 'Data:', json
   if req.acceptsXml and not req.acceptsJson
-    renderAs.xml 'todos.xml', all: data
+    data = JSON.parse json
+    renderAsXml 'todos.xml', all: data
   else
-    json = JSON.stringify data
-    log.debug 'Data:', json
-    respondWith.json json
+    respondWithJson json
 
 app.post TODOS_URL, (req) ->
   todo =
@@ -49,8 +46,8 @@ app.post TODOS_URL, (req) ->
   json = String todo.toJson()
   log.debug 'Data:', json
   if req.acceptsXml and not req.acceptsJson
-    renderAs.xml TODO_XML, data: JSON.parse json
-  else respondWith.json json
+    renderAsXml TODO_XML, data: JSON.parse json
+  else respondWithJson json
 
 app.get TODO_URL, (req, id) ->
   try
@@ -58,8 +55,8 @@ app.get TODO_URL, (req, id) ->
     json = String todo.toJson()
     log.debug 'Data:', json
     if req.acceptsXml and not req.acceptsJson
-      renderAs.xml TODO_XML, data: JSON.parse json
-    else respondWith.json json
+      renderAsXml TODO_XML, data: JSON.parse json
+    else respondWithJson json
   catch err
     if err.javaException instanceof NoSuchElement
       response.notFound "#{TODOS_URL}/#{id}"
@@ -74,15 +71,15 @@ app.put TODO_URL, (req) ->
   json = String todo.toJson()
   log.debug 'Data:', json
   if req.acceptsXml and not req.acceptsJson
-    renderAs.xml TODO_XML, data: JSON.parse json
-  else respondWith.json json
+    renderAsXml TODO_XML, data: JSON.parse json
+  else respondWithJson json
 
 app.del TODO_URL, (req, id) ->
   try
     Todos.remove id
     if req.acceptsXml and not req.acceptsJson
       response.xml ''
-    else respondWith.json ''
+    else respondWithJson ''
   catch err
     if err.javaException instanceof NoSuchElement
       response.notFound "#{TODOS_URL}/#{id}"

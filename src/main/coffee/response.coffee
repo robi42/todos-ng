@@ -10,17 +10,15 @@ renderApiBase = getRepository(module.resolve(
 
 # Response helpers.
 module.exports =
-  respondWith:
-    json: (data) ->
-      status: 200
-      headers:
-        'Content-Type':
-          'application/json; charset=utf-8'
-      body: [data]
+  respondWithJson: (data) ->
+    status: 200
+    headers:
+      'Content-Type':
+        'application/json; charset=utf-8'
+    body: [data]
 
-  renderAs:
-    xml: (template, data) ->
-      app.render template, data,
-        base:        renderApiBase
-        master:      'master.xml'
-        contentType: 'application/xml'
+  renderAsXml: (template, data) ->
+    app.render template, data,
+      base:        renderApiBase
+      master:      'master.xml'
+      contentType: 'application/xml'
