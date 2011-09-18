@@ -7,23 +7,14 @@ import net.liftweb.json._
 import net.liftweb.json.JsonDSL._
 
 // Model definitions.
-class Todo private() extends MongoRecord[Todo] with ObjectIdPk[Todo] {
+class Todo private() extends MongoRecord[Todo] with ObjectIdPk[Todo]
+                                               with Timestampable[Todo]
+                                               with JsonSerializable[Todo] {
   def meta = Todo
 
-  object text       extends StringField(this, 12)
-  object order      extends LongField(this)
-  object done       extends BooleanField(this)
-  object createdAt  extends DateTimeField(this) {
-    override def asJValue = JInt(value.getTimeInMillis)
-  }
-  object modifiedAt extends OptionalDateTimeField(this) {
-    override def asJValue = value match {
-      case Some(value) => JInt(value.getTimeInMillis)
-      case None        => JNull
-    }
-  }
-
-  def toJson = compact(render(this.asJValue))
+  object text  extends StringField(this, 12)
+  object order extends LongField(this)
+  object done  extends BooleanField(this)
 }
 
 object Todo extends Todo with MongoMetaRecord[Todo] {
@@ -31,7 +22,6 @@ object Todo extends Todo with MongoMetaRecord[Todo] {
 }
 
 // For JSON serialization.
-sealed abstract class JsonData
 final case class TodoCreateJson(text: String, order: Long, done: Boolean)
   extends JsonData
 final case class TodoUpdateJson(_id: String, text: String, done: Boolean)
