@@ -60,7 +60,7 @@ object Todos extends Storable {
   }
 
   private def updateFromXml(data: NodeSeq) = {
-    val id    = (data \ IdAttr.toString).text
+    val id     = (data \ IdAttr.toString).text
     val modify = Todo where (_.id eqs new ObjectId(id)) findAndModify
       (_.text setTo (data \ TextElem.toString).text) and
       (_.done setTo (data \ DoneElem.toString).text.toBoolean) and
